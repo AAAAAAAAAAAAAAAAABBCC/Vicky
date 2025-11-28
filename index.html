@@ -2,25 +2,32 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>AnyFile | Flow State Document Tools</title>
-    <meta name="description" content="Merge, Split, Compress, and Convert PDFs with AnyFile. Experience the fluid, cinematic interface designed for professionals." />
-    <meta name="keywords" content="PDF merge, PDF split, PDF tools, cinematic UI, liquid glass, convert pdf, secure pdf" />
+    <meta name="description" content="Free online PDF tools to merge, split, compress, and convert documents. Secure, fast, and cinematic interface for professionals." />
+    <meta name="keywords" content="PDF merge, PDF split, PDF compress, PDF to Word, convert PDF, free pdf tools, secure pdf editor" />
     <meta name="author" content="AnyFile Inc." />
+    <meta name="theme-color" content="#000000" />
     
+    <!-- Preconnect to critical domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://anyfile.app/" />
     <meta property="og:title" content="AnyFile - The Ultimate PDF Suite" />
     <meta property="og:description" content="Experience the future of document management. Liquid glass aesthetics, privacy-first processing." />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80" />
+    <meta property="og:site_name" content="AnyFile" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://anyfile.app/" />
-    <meta property="twitter:title" content="AnyFile - Flow State Tools" />
-    <meta property="twitter:description" content="Merge, Split, Compress. Beautifully." />
-    <meta property="twitter:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://anyfile.app/" />
+    <meta name="twitter:title" content="AnyFile - Flow State Tools" />
+    <meta name="twitter:description" content="Merge, Split, Compress. Beautifully." />
+    <meta name="twitter:image" content="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80" />
 
     <!-- JSON-LD Schema for Software Application -->
     <script type="application/ld+json">
@@ -30,12 +37,14 @@
       "name": "AnyFile",
       "applicationCategory": "ProductivityApplication",
       "operatingSystem": "Web",
+      "url": "https://anyfile.app",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "USD"
       },
-      "description": "A suite of PDF manipulation tools including merge, split, compress, and convert functionalities."
+      "description": "A suite of PDF manipulation tools including merge, split, compress, and convert functionalities.",
+      "featureList": "Merge PDF, Split PDF, Compress PDF, Convert to JPG, Convert to Word"
     }
     </script>
 
@@ -51,9 +60,9 @@
               text: 'var(--text)',
             },
             fontFamily: {
-              sans: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'Inter', 'sans-serif'],
-              display: ['SF Pro Display', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-              mono: ['SF Mono', 'Menlo', 'Monaco', 'Courier New', 'monospace'],
+              sans: ['Inter', 'system-ui', 'sans-serif'],
+              display: ['Inter', 'system-ui', 'sans-serif'],
+              mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
             },
             animation: {
               'float': 'float 8s ease-in-out infinite',
@@ -100,7 +109,7 @@
         }
       }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
       :root {
         --background: #000000;
@@ -112,18 +121,19 @@
       }
       .light {
         --background: #f5f5f7;
-        --text: #1d1d1f;
+        --text: #111827;
       }
       
       html {
         scroll-behavior: smooth;
+        text-rendering: optimizeLegibility;
       }
 
       body {
         background-color: var(--background);
         color: var(--text);
         overflow-x: hidden;
-        font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family: 'Inter', system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         transition: color 0.5s ease, background-color 0.5s ease;
@@ -140,12 +150,12 @@
         transform: translateZ(0);
       }
       
-      /* Light Mode Glass - Ultra Transparent */
+      /* Light Mode Glass - Ultra Transparent but visible for accessibility */
       .light .liquid-glass {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.6);
         backdrop-filter: blur(20px) saturate(120%);
         -webkit-backdrop-filter: blur(20px) saturate(120%);
-        border: 1px solid rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.05);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
       }
       
@@ -243,7 +253,7 @@
       }
       
       .light .text-dynamic { color: #111827; }
-      .dark .text-dynamic { color: #f5f5f7; }
+      .dark .text-dynamic { color: #f9fafb; }
       
       /* Click Ripple */
       .click-ripple {
@@ -260,7 +270,6 @@
         will-change: transform;
       }
     </style>
-    <!-- Removed imports to fix relative paths, now handled by Vite -->
 <script type="importmap">
 {
   "imports": {

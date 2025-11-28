@@ -52,8 +52,6 @@ const CATEGORIES = [
   }
 ];
 
-// Apple Dock Effect Logic:
-// Each card tracks its distance from the mouse pointer to determine scale
 const BentoCard: React.FC<{ 
     tool: ToolConfig, 
     onSelect: () => void, 
@@ -63,16 +61,12 @@ const BentoCard: React.FC<{
 }> = ({ tool, onSelect, isHighlighted, mouseX, mouseY }) => {
   const ref = useRef<HTMLDivElement>(null);
   
-  // Calculate distance from mouse to center of this card
-  // Note: We use a simplified proximity effect. 
-  // For true dock, we need global mouse coords relative to viewport.
-  // Here we will use a localized hover effect that mimics the springy dock feel.
-  
-  // Instead of full grid math which is heavy, we'll use a strong local spring zoom
-  // that feels like the dock item being selected.
-  
-  const handleMouseMove = (e: React.MouseEvent) => {
-     // Optional: Local parallax tilt logic here
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      playClickSound();
+      onSelect();
+    }
   };
 
   // @ts-ignore
@@ -84,11 +78,15 @@ const BentoCard: React.FC<{
       layoutId={`card-${tool.id}`}
       initial={{ opacity: 0, scale: 0.8 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      whileHover={{ scale: 1.08, zIndex: 50 }} // Dock Zoom
+      whileHover={{ scale: 1.08, zIndex: 50 }}
       animate={isHighlighted ? { scale: 1.1, y: -20, zIndex: 20 } : {}}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
       onClick={() => { playClickSound(); onSelect(); }}
-      className="relative w-full aspect-square cursor-pointer group will-change-transform"
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Select tool: ${tool.title}`}
+      className="relative w-full aspect-square cursor-pointer group will-change-transform focus:outline-none focus:ring-4 focus:ring-blue-500/50 rounded-[1.8rem]"
       style={{ transformOrigin: 'center center' }} 
     >
       <div className={`
@@ -99,7 +97,7 @@ const BentoCard: React.FC<{
         border border-white/20
         transform-gpu
       `}
-      style={{ borderRadius: '1.8rem' }} // Ensure squircle persists on zoom
+      style={{ borderRadius: '1.8rem' }}
       >
         <div className="absolute inset-0 colored-glass-overlay"></div>
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 mix-blend-overlay pointer-events-none" />
@@ -109,7 +107,7 @@ const BentoCard: React.FC<{
             <div className="w-10 h-10 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner group-hover:scale-110 transition-transform duration-300">
               <IconComponent className="w-5 h-5 md:w-7 md:h-7 text-white drop-shadow-md" />
             </div>
-            <Icons.ArrowUpRight className="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+            <Icons.ArrowUpRight className="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" aria-hidden="true" />
           </div>
           <div>
             <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter leading-none mb-2 drop-shadow-md">
@@ -132,7 +130,6 @@ const CategorySection: React.FC<{
     isFiltering: boolean 
 }> = ({ category, tools, onSelectTool, isFiltering }) => {
   const containerRef = useRef(null);
-  // Placeholders for mouse tracking if we wanted global effect
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -147,7 +144,6 @@ const CategorySection: React.FC<{
   return (
     <div ref={containerRef} className="flex flex-col lg:flex-row gap-8 lg:gap-24 relative group min-h-[40vh]">
       
-      {/* Left Column: Details */}
       <motion.div 
         className="lg:w-1/3 lg:space-y-8 lg:sticky lg:top-24 lg:self-start z-0"
       >
@@ -181,18 +177,18 @@ const CategorySection: React.FC<{
          </motion.div>
       </motion.div>
 
-      {/* Right Column: The Grid */}
       <div className="lg:w-2/3 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6" role="list">
           {tools.map((tool) => (
-            <BentoCard 
-                key={tool.id} 
-                tool={tool} 
-                onSelect={() => onSelectTool(tool)} 
-                isHighlighted={isFiltering}
-                mouseX={mouseX}
-                mouseY={mouseY}
-            />
+            <div role="listitem" key={tool.id}>
+              <BentoCard 
+                  tool={tool} 
+                  onSelect={() => onSelectTool(tool)} 
+                  isHighlighted={isFiltering}
+                  mouseX={mouseX}
+                  mouseY={mouseY}
+              />
+            </div>
           ))}
         </div>
       </div>
@@ -211,7 +207,6 @@ export const ToolGrid: React.FC<Props> = ({ onSelectTool, searchQuery }) => {
   
   const isFiltering = searchQuery.length > 0;
 
-  // Race up effect
   useEffect(() => {
     if (isFiltering && gridRef.current) {
         const yOffset = -100;
@@ -222,7 +217,7 @@ export const ToolGrid: React.FC<Props> = ({ onSelectTool, searchQuery }) => {
   }, [isFiltering]);
 
   return (
-    <section className="py-20 px-4 md:px-6 max-w-[1600px] mx-auto min-h-[60vh] relative z-10" id="tools" ref={gridRef}>
+    <section className="py-20 px-4 md:px-6 max-w-[1600px] mx-auto min-h-[60vh] relative z-10" id="tools" ref={gridRef} aria-label="Tools List">
       
       {!isFiltering && (
         <div className="flex flex-col items-center mb-16 md:mb-32 text-center">
@@ -251,7 +246,7 @@ export const ToolGrid: React.FC<Props> = ({ onSelectTool, searchQuery }) => {
       </div>
       
       {allFilteredTools.length === 0 && (
-         <div className="text-center py-20 opacity-50 text-dynamic text-xl font-mono font-bold">
+         <div className="text-center py-20 opacity-50 text-dynamic text-xl font-mono font-bold" role="status">
            No tools found matching "{searchQuery}"
          </div>
       )}

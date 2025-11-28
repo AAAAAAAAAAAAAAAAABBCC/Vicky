@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Sun, Moon, Zap } from 'lucide-react';
+import { Search, Sun, Moon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playClickSound } from '../utils/sounds';
 
@@ -53,6 +53,7 @@ export const Navbar: React.FC<Props> = ({ onSearch, toggleTheme, isDark }) => {
           {/* Logo Area */}
           <Link 
             to="/" 
+            aria-label="AnyFile Home"
             className={`flex items-center gap-3 px-2 md:px-3 group ${isSearchOpen ? 'hidden md:flex' : 'flex'}`}
             onClick={playClickSound}
           >
@@ -72,6 +73,7 @@ export const Navbar: React.FC<Props> = ({ onSearch, toggleTheme, isDark }) => {
                  <svg 
                    viewBox="0 0 24 24" 
                    className="w-4 h-4 text-white stroke-2 fill-none stroke-current"
+                   aria-hidden="true"
                  >
                    <motion.path 
                      d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2z" 
@@ -112,6 +114,7 @@ export const Navbar: React.FC<Props> = ({ onSearch, toggleTheme, isDark }) => {
                         exit={{ opacity: 0, width: 0 }}
                         type="text"
                         placeholder="Search..."
+                        aria-label="Search tools"
                         value={searchQuery}
                         onChange={handleSearchChange}
                         className="bg-transparent border-none outline-none text-white dark:text-white light:text-black placeholder:text-gray-400 h-full w-full text-sm font-medium min-w-[80px] mr-1"
@@ -121,6 +124,7 @@ export const Navbar: React.FC<Props> = ({ onSearch, toggleTheme, isDark }) => {
                   
                   <button 
                     onClick={() => { setIsSearchOpen(!isSearchOpen); playClickSound(); }}
+                    aria-label="Toggle search"
                     className={`p-2 rounded-full text-white dark:text-white light:text-black shrink-0 flex items-center justify-center`}
                   >
                     <Search className="w-4 h-4" />
@@ -134,6 +138,7 @@ export const Navbar: React.FC<Props> = ({ onSearch, toggleTheme, isDark }) => {
           {/* Dark/Light Toggle */}
           <button 
             onClick={() => { toggleTheme(); playClickSound(); }}
+            aria-label="Toggle dark mode"
             className="p-2.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors text-dynamic"
           >
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}

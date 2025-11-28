@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { HashRouter, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { ToolGrid } from './components/ToolGrid';
-import { ToolInterface } from './components/ToolInterface';
-import { SocialSection } from './components/SocialSection';
-import { Footer } from './components/Footer';
 import { LiveBackground } from './components/LiveBackground';
 import { ToolConfig } from './types';
 import { WALLPAPERS } from './constants';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playClickSound } from './utils/sounds';
+
+// Lazy load heavy components for better initial load performance
+const ToolGrid = lazy(() => import('./components/ToolGrid').then(module => ({ default: module.ToolGrid })));
+const ToolInterface = lazy(() => import('./components/ToolInterface').then(module => ({ default: module.ToolInterface })));
+const SocialSection = lazy(() => import('./components/SocialSection').then(module => ({ default: module.SocialSection })));
+const Footer = lazy(() => import('./components/Footer').then(module => ({ default: module.Footer })));
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -20,6 +22,12 @@ const ScrollToTop = () => {
   }, [pathname]);
   return null;
 };
+
+const LoadingFallback = () => (
+  <div className="w-full h-40 flex items-center justify-center">
+    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+  </div>
+);
 
 const MainContent: React.FC = () => {
   const [selectedTool, setSelectedTool] = useState<ToolConfig | null>(null);
@@ -75,10 +83,10 @@ const MainContent: React.FC = () => {
         {/* Global Glow Layer */}
         <div className="glow-layer"></div>
 
-        {/* Live Canvas Layer - Always active, subtle */}
+        {/* Live Canvas Layer */}
         <LiveBackground mode={isDark ? 'oled' : 'mesh'} isDark={isDark} />
         
-        {/* Wallpapers Layer - Highly transparent for mix */}
+        {/* Wallpapers Layer */}
         <div className="absolute inset-0 transition-opacity duration-1000 opacity-60">
              {WALLPAPERS.map((src, index) => (
               <div 
@@ -104,15 +112,23 @@ const MainContent: React.FC = () => {
           {!selectedTool ? (
             <>
               <Hero />
-              <ToolGrid onSelectTool={setSelectedTool} searchQuery={searchQuery} />
-              <SocialSection />
+              <Suspense fallback={<LoadingFallback />}>
+                <ToolGrid onSelectTool={setSelectedTool} searchQuery={searchQuery} />
+                <SocialSection />
+              </Suspense>
             </>
           ) : (
-            <ToolInterface tool={selectedTool} onBack={() => setSelectedTool(null)} />
+            <Suspense fallback={<div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-white w-12 h-12" /></div>}>
+              <ToolInterface tool={selectedTool} onBack={() => setSelectedTool(null)} />
+            </Suspense>
           )}
         </main>
         
-        {!selectedTool && <Footer />}
+        {!selectedTool && (
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
+        )}
 
         <AnimatePresence>
           {showScrollTop && !selectedTool && (
@@ -121,6 +137,7 @@ const MainContent: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={scrollToTop}
+              aria-label="Scroll to top"
               className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full liquid-glass text-dynamic shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
             >
               <ArrowUp className="w-6 h-6" />
